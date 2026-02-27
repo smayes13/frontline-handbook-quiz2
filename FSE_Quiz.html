@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Frontline Support Engineer — Knowledge Quiz</title>
+<style>
+  :root {
+    --navy: #1a2744;
+    --navy-light: #223366;
+    --blue: #1a6bb5;
+    --blue-light: #2980b9;
+    --accent: #f0a500;
+    --green: #1a9e5c;
+    --red: #c0392b;
+    --bg: #f0f4f8;
+    --card: #ffffff;
+    --text: #1e2a3a;
+    --muted: #6b7a8d;
+    --border: #d0dae8;
+    --radius: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, var(--navy) 0%, #0d1b36 100%);
+    color: #fff;
+    padding: 36px 24px 28px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 40px,
+      rgba(255,255,255,.025) 40px,
+      rgba(255,255,255,.025) 80px
+    );
+  }
+  header h1 {
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    font-weight: 800;
+    letter-spacing: .5px;
+    position: relative;
+  }
+  header p {
+    margin-top: 6px;
+    font-size: .95rem;
+    color: #aac4e8;
+    position: relative;
+  }
+  .badge {
+    display: inline-block;
+    margin-top: 14px;
+    background: var(--accent);
+    color: #1a1a1a;
+    font-size: .78rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 5px 14px;
+    border-radius: 999px;
+    position: relative;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  }
+  .progress-label { font-size: .82rem; font-weight: 600; color: var(--navy); white-space: nowrap; }
+  .progress-bar-bg {
+    flex: 1;
+    height: 8px;
+    background: #dde6f0;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue), var(--accent));
+    border-radius: 999px;
+    transition: width .4s ease;
+    width: 0%;
+  }
+  .progress-score {
+    font-size: .82rem;
+    font-weight: 700;
+    color: var(--navy);
+    white-space: nowrap;
+  }
+
+  /* ── MAIN CONTAINER ── */
+  main { max-width: 860px; margin: 0 auto; padding: 32px 20px 60px; }
+
+  /* ── START SCREEN ── */
+  #start-screen {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 48px 36px;
+    text-align: center;
+    box-shadow: 0 4px 24px rgba(0,0,0,.07);
+  }
+  #start-screen h2 { font-size: 1.5rem; color: var(--navy); margin-bottom: 14px; }
+  #start-screen p { color: var(--muted); line-height: 1.7; max-width: 520px; margin: 0 auto 28px; }
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 14px;
+    margin-bottom: 36px;
+  }
+  .meta-item {
+    background: #f4f8ff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .meta-item .mi-val { font-size: 1.6rem; font-weight: 800; color: var(--navy); }
+  .meta-item .mi-lbl { font-size: .75rem; color: var(--muted); margin-top: 2px; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 32px;
+    border: none;
+    border-radius: 999px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s, background .2s;
+  }
+  .btn:active { transform: scale(.97); }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--blue), #0f4c81);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(26,107,181,.35);
+  }
+  .btn-primary:hover { box-shadow: 0 6px 20px rgba(26,107,181,.5); transform: translateY(-2px); }
+  .btn-secondary {
+    background: #fff;
+    color: var(--navy);
+    border: 2px solid var(--border);
+  }
+  .btn-secondary:hover { background: var(--bg); }
+  .btn-accent {
+    background: linear-gradient(135deg, var(--accent), #d4880a);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(240,165,0,.35);
+  }
+  .btn-accent:hover { box-shadow: 0 6px 20px rgba(240,165,0,.5); transform: translateY(-2px); }
+
+  /* ── QUIZ SCREEN ── */
+  #quiz-screen { display: none; }
+
+  .section-tag {
+    display: inline-block;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 999px;
+    margin-bottom: 12px;
+    background: #e8f0fb;
+    color: var(--navy);
+    border: 1px solid #c5d8f0;
+  }
+
+  .question-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px 28px 26px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.06);
+    animation: slideIn .35s ease;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .q-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .q-number {
+    min-width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: .9rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .q-text { font-size: 1.05rem; font-weight: 600; line-height: 1.55; color: var(--text); }
+
+  /* ── OPTIONS ── */
+  .options { display: flex; flex-direction: column; gap: 10px; }
+
+  .option-btn {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 18px;
+    background: #f7faff;
+    border: 2px solid #dde8f8;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: left;
+    font-size: .95rem;
+    line-height: 1.5;
+    color: var(--text);
+    transition: border-color .2s, background .2s, transform .1s;
+    width: 100%;
+  }
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--blue);
+    background: #edf4ff;
+    transform: translateX(3px);
+  }
+  .option-letter {
+    min-width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: #dde8f8;
+    color: var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: .82rem;
+    flex-shrink: 0;
+    transition: background .2s, color .2s;
+  }
+
+  /* States */
+  .option-btn.correct {
+    border-color: var(--green);
+    background: #e8fdf0;
+  }
+  .option-btn.correct .option-letter {
+    background: var(--green);
+    color: #fff;
+  }
+  .option-btn.wrong {
+    border-color: var(--red);
+    background: #fdecea;
+  }
+  .option-btn.wrong .option-letter {
+    background: var(--red);
+    color: #fff;
+  }
+  .option-btn.missed {
+    border-color: var(--green);
+    background: #e8fdf0;
+    opacity: .7;
+  }
+  .option-btn.missed .option-letter {
+    background: var(--green);
+    color: #fff;
+  }
+  .option-btn:disabled { cursor: default; transform: none !important; }
+
+  /* ── FEEDBACK ── */
+  .feedback {
+    margin-top: 18px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: .9rem;
+    line-height: 1.55;
+    display: none;
+    animation: fadeIn .25s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .feedback.correct-fb { background: #e8fdf0; border: 1px solid #a8e6c0; color: #0e5c33; }
+  .feedback.wrong-fb   { background: #fdecea; border: 1px solid #f0b4ad; color: #7b1e1e; }
+  .feedback-icon { font-size: 1.1rem; margin-right: 6px; }
+
+  /* ── NAV ── */
+  .q-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .q-nav-left { display: flex; gap: 10px; }
+
+  /* ── RESULT SCREEN ── */
+  #result-screen { display: none; animation: slideIn .4s ease; }
+
+  .result-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 48px 36px;
+    text-align: center;
+    box-shadow: 0 4px 24px rgba(0,0,0,.07);
+  }
+  .score-circle {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    margin: 0 auto 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    position: relative;
+  }
+  .score-circle svg {
+    position: absolute;
+    top: 0; left: 0;
+    transform: rotate(-90deg);
+  }
+  .score-circle .sc-number { font-size: 2.4rem; color: var(--navy); position: relative; z-index: 1; }
+  .score-circle .sc-denom  { font-size: .9rem;  color: var(--muted); position: relative; z-index: 1; }
+
+  .grade-label {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+  .grade-desc {
+    color: var(--muted);
+    font-size: .95rem;
+    margin-bottom: 32px;
+    line-height: 1.6;
+  }
+
+  /* Stats row */
+  .stats-row {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 36px;
+  }
+  .stat-box {
+    background: #f4f8ff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 24px;
+    min-width: 110px;
+  }
+  .stat-box .sb-val { font-size: 1.8rem; font-weight: 800; }
+  .stat-box .sb-lbl { font-size: .75rem; color: var(--muted); margin-top: 2px; }
+  .stat-box.green .sb-val { color: var(--green); }
+  .stat-box.red   .sb-val { color: var(--red); }
+  .stat-box.blue  .sb-val { color: var(--blue); }
+
+  /* Review list */
+  .review-toggle {
+    background: none;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-size: .9rem;
+    font-weight: 600;
+    color: var(--navy);
+    cursor: pointer;
+    margin-bottom: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .review-toggle:hover { background: var(--bg); }
+
+  #review-list { display: none; text-align: left; }
+  .review-item {
+    padding: 16px 18px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    border: 1px solid;
+    font-size: .88rem;
+    line-height: 1.55;
+  }
+  .review-item.ri-correct { background: #e8fdf0; border-color: #a8e6c0; }
+  .review-item.ri-wrong   { background: #fdecea; border-color: #f0b4ad; }
+  .review-item .ri-q  { font-weight: 700; margin-bottom: 6px; }
+  .review-item .ri-your { color: var(--red); }
+  .review-item .ri-correct-ans { color: var(--green); font-weight: 600; }
+
+  .result-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 8px; }
+
+  /* ── QUESTION DOT NAV ── */
+  .dot-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 24px;
+  }
+  .dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: #dde8f8;
+    border: 2px solid transparent;
+    font-size: .72rem;
+    font-weight: 700;
+    color: var(--navy);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .2s;
+  }
+  .dot.current { border-color: var(--blue); background: #edf4ff; }
+  .dot.answered-correct { background: var(--green); color: #fff; }
+  .dot.answered-wrong   { background: var(--red);   color: #fff; }
+
+  @media (max-width: 600px) {
+    .question-card { padding: 22px 16px 18px; }
+    #start-screen, .result-card { padding: 32px 18px; }
+    .q-text { font-size: .97rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>⚙️ Frontline Support Engineer</h1>
+  <p>Handbook Knowledge Quiz — Version 1.0 · February 2026</p>
+  <span class="badge">CONFIDENTIAL · INTERNAL USE ONLY</span>
+</header>
+
+<div class="progress-wrap" id="progress-wrap" style="display:none;">
+  <span class="progress-label" id="prog-label">Q 1 / 20</span>
+  <div class="progress-bar-bg"><div class="progress-bar-fill" id="prog-fill"></div></div>
+  <span class="progress-score" id="prog-score">Score: 0</span>
+</div>
+
+<main>
+
+<!-- ═══════════ START SCREEN ═══════════ -->
+<div id="start-screen">
+  <h2>📋 Ready to Test Your Knowledge?</h2>
+  <p>This 20-question multiple-choice quiz covers the key policies, procedures, and best practices from the Frontline Support Engineer Handbook. Take your time and choose the best answer for each question.</p>
+  <div class="meta-grid">
+    <div class="meta-item"><div class="mi-val">20</div><div class="mi-lbl">Questions</div></div>
+    <div class="meta-item"><div class="mi-val">MCQ</div><div class="mi-lbl">Format</div></div>
+    <div class="meta-item"><div class="mi-val">~10</div><div class="mi-lbl">Minutes Est.</div></div>
+    <div class="meta-item"><div class="mi-val">90%</div><div class="mi-lbl">Passing Score</div></div>
+  </div>
+  <button class="btn btn-primary" onclick="startQuiz()">🚀 Start Quiz</button>
+</div>
+
+<!-- ═══════════ QUIZ SCREEN ═══════════ -->
+<div id="quiz-screen">
+  <div class="dot-nav" id="dot-nav"></div>
+  <div id="question-area"></div>
+</div>
+
+<!-- ═══════════ RESULT SCREEN ═══════════ -->
+<div id="result-screen">
+  <div class="result-card">
+    <div class="score-circle" id="score-circle">
+      <svg width="140" height="140" viewBox="0 0 140 140">
+        <circle cx="70" cy="70" r="62" fill="none" stroke="#e0eaf8" stroke-width="10"/>
+        <circle id="arc" cx="70" cy="70" r="62" fill="none" stroke="#1a6bb5"
+                stroke-width="10" stroke-linecap="round"
+                stroke-dasharray="389.6" stroke-dashoffset="389.6"
+                style="transition: stroke-dashoffset 1s ease;"/>
+      </svg>
+      <div class="sc-number" id="sc-num">0</div>
+      <div class="sc-denom">out of 20</div>
+    </div>
+
+    <div class="grade-label" id="grade-label"></div>
+    <div class="grade-desc"  id="grade-desc"></div>
+
+    <div class="stats-row">
+      <div class="stat-box green"><div class="sb-val" id="stat-correct">0</div><div class="sb-lbl">Correct</div></div>
+      <div class="stat-box red">  <div class="sb-val" id="stat-wrong">0</div>  <div class="sb-lbl">Incorrect</div></div>
+      <div class="stat-box blue"> <div class="sb-val" id="stat-pct">0%</div>   <div class="sb-lbl">Score %</div></div>
+    </div>
+
+    <button class="review-toggle" onclick="toggleReview(this)">📖 Show Answer Review ▼</button>
+    <div id="review-list"></div>
+
+    <div class="result-actions">
+      <button class="btn btn-primary"    onclick="restartQuiz()">🔄 Retake Quiz</button>
+      <button class="btn btn-secondary"  onclick="printPage()">🖨️ Print Results</button>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+const questions = [
+  {
+    section: "📞 Phone & Client Communication",
+    q: "When the phone rings, what is the correct action for a Frontline Support Engineer?",
+    options: [
+      "Let it go to voicemail if you are already working on a ticket.",
+      "Answer promptly and work the problem immediately.",
+      "Take a message and call back within 24 hours.",
+      "Transfer the call to the next available team member."
+    ],
+    answer: 1,
+    explanation: "Phones are the #1 priority. You never let a call go to voicemail if available, and when you answer you work the problem immediately — not take a message."
+  },
+  {
+    section: "📞 Phone & Client Communication",
+    q: "Phones are busiest in the morning. How should you plan your day accordingly?",
+    options: [
+      "Schedule all client calls before 9 AM and leave afternoons free.",
+      "Avoid answering calls in the morning so you can focus on projects.",
+      "Delay projects and on-site visits to the afternoon whenever possible.",
+      "Assign morning calls to junior team members and handle them in the afternoon."
+    ],
+    answer: 2,
+    explanation: "The handbook states: 'Phones are busiest in the morning. Plan your day accordingly—delay projects and on-site visits to the afternoon whenever possible.'"
+  },
+  {
+    section: "🎯 Setting Expectations",
+    q: "What is the correct approach when providing clients with a resolution timeline?",
+    options: [
+      "Always give an aggressive timeline to impress the client.",
+      "Avoid committing to any timeline until you are 100% certain.",
+      "Under-promise and over-deliver; provide realistic timeframes.",
+      "Let the client set the timeline and match it exactly."
+    ],
+    answer: 2,
+    explanation: "The handbook is clear: 'Provide a realistic timeframe for resolution. Under-promise and over-deliver.' Never leave the client uncertain about timing."
+  },
+  {
+    section: "🎫 Stale Ticket Policy",
+    q: "According to the Stale Ticket Policy, no ticket should go without an update for more than how long?",
+    options: [
+      "1 day",
+      "3 days",
+      "5 business days",
+      "1 week"
+    ],
+    answer: 1,
+    explanation: "Section 10.6 states: 'No ticket should go 3 days without an update.' Silence is not an acceptable update — even 'waiting on vendor' counts."
+  },
+  {
+    section: "🔧 Troubleshooting",
+    q: "What are the FIRST five diagnostic questions a technician should ask before beginning troubleshooting?",
+    options: [
+      "Who reported it? What software is installed? Is it under warranty? Did you reboot? How old is the device?",
+      "Has it ever worked? When did it stop? What changed? Is it reproducible? Is it isolated or widespread?",
+      "What's the asset tag? Who is the client? What's the ticket number? Is it hardware? Is it a server?",
+      "Is the user remote? Is it a VPN issue? Did you check the logs? Is antivirus running? Is it a laptop?"
+    ],
+    answer: 1,
+    explanation: "Section 4.2 lists the five diagnostic questions: Has it ever worked? When did it stop? What changed? Is it reproducible? Is it isolated or widespread?"
+  },
+  {
+    section: "🔧 Troubleshooting",
+    q: "The 15–20 Minute Rule in troubleshooting means:",
+    options: [
+      "You have 15–20 minutes to respond to any new ticket before it auto-escalates.",
+      "You must resolve every ticket within 15–20 minutes or it is flagged.",
+      "If focused troubleshooting hasn't given you a clear path after 15–20 minutes, escalate or collaborate rather than continuing to dig.",
+      "All on-site visits must be completed within 15–20 minutes."
+    ],
+    answer: 2,
+    explanation: "Section 4.1: 'If 15–20 minutes of focused, structured troubleshooting hasn't given you a clear path, continuing to dig is unlikely to be productive. Escalate, collaborate, or consider a reload.'"
+  },
+  {
+    section: "🔧 Troubleshooting",
+    q: "Before reloading or reimaging a PC, what must you verify first?",
+    options: [
+      "That the user has backed up all their files to OneDrive.",
+      "That the hard drive is healthy by running Check Disk (chkdsk /scan).",
+      "That engineering has approved the reload.",
+      "That the PC is less than 3 years old and covered under warranty."
+    ],
+    answer: 1,
+    explanation: "Section 4.5: 'If troubleshooting leads you to a reload/reimage, you must first verify the hard drive is healthy.' Use chkdsk with the /scan parameter."
+  },
+  {
+    section: "🔧 Troubleshooting",
+    q: "When running an initial hard drive health check before a reload, why should you NOT use the /f parameter with chkdsk?",
+    options: [
+      "The /f parameter can permanently corrupt the drive on modern hardware.",
+      "The /f parameter requires administrator approval before use.",
+      "The /f parameter takes significantly longer and is not necessary for an initial health check.",
+      "The /f parameter only works on SSDs, not traditional hard drives."
+    ],
+    answer: 2,
+    explanation: "Section 4.5 explicitly states: 'Do NOT run chkdsk with the /f (fix) parameter at this stage—it takes significantly longer and is not necessary for an initial health check.'"
+  },
+  {
+    section: "🔧 Troubleshooting",
+    q: "According to the structured troubleshooting workflow, what should you do when testing a fix?",
+    options: [
+      "Change multiple settings at once to resolve the issue faster.",
+      "Test one controlled variable at a time so you know what actually resolved the issue.",
+      "Ask the user to test the fix themselves and report back.",
+      "Apply the most comprehensive fix first to avoid additional callbacks."
+    ],
+    answer: 1,
+    explanation: "Section 4.4: 'Test one controlled variable at a time. Never change multiple things simultaneously—you won't know what fixed it.'"
+  },
+  {
+    section: "🔐 Security",
+    q: "What is the correct process for delivering a password to a user?",
+    options: [
+      "Email the password directly to the user's personal email address.",
+      "Include the password in the ticket notes so the user can reference it.",
+      "Use the MSP secure messaging process to deliver passwords.",
+      "Read the password verbally over the phone and ask them to write it down."
+    ],
+    answer: 2,
+    explanation: "Section 6.1: 'Always use the MSP secure messaging process to deliver passwords to users. Never include passwords in ticket notes, emails, chat messages, or any unsecured channel.'"
+  },
+  {
+    section: "🔐 Security",
+    q: "Before assisting with a password reset or account change, what must you always do?",
+    options: [
+      "Get written approval from the client's manager.",
+      "Verify the identity of the person you are speaking with using the MSP verification process.",
+      "Check the ticket system to confirm the request came through an official channel.",
+      "Confirm the user's employee ID and department."
+    ],
+    answer: 1,
+    explanation: "Section 6.2: 'Before assisting with any request that involves sensitive actions, you must verify the identity of the person you are speaking with.' Use the MSP process to text and verify."
+  },
+  {
+    section: "🔐 Security",
+    q: "If you suspect a security incident or phishing attempt, what should you do?",
+    options: [
+      "Investigate the incident fully before escalating to avoid false alarms.",
+      "Notify the end user immediately and ask them to change all their passwords.",
+      "Escalate immediately, document what you observed, and do not discuss details with the end user until directed.",
+      "Close the ticket and open a new one tagged as 'Security' for the security team."
+    ],
+    answer: 2,
+    explanation: "Section 6.3: 'Escalate immediately. Do not attempt to investigate or resolve security concerns on your own. Do not communicate details of the suspected incident to the end user until directed.'"
+  },
+  {
+    section: "⬆️ Escalation",
+    q: "When must you engage the Engineering team (rather than handle it at the frontline level)?",
+    options: [
+      "Only when a server has physically failed and needs hardware replacement.",
+      "Whenever a ticket remains open for more than 24 hours.",
+      "For multi-user issues, multi-machine changes, network config changes, scripting/GPO needs, or tasks you're repeating more than once.",
+      "Only when the CEO requests escalation directly."
+    ],
+    answer: 2,
+    explanation: "Section 7.3 lists engineering triggers: multi-user issues, multi-machine changes, server/infrastructure issues, scripts/GPO/automation, network configuration changes, and repeated tasks."
+  },
+  {
+    section: "⬆️ Escalation",
+    q: "What is the correct escalation path when you need help on a difficult ticket?",
+    options: [
+      "CEO → Engineering Team → Helpdesk Teams Group",
+      "Helpdesk Teams Group → Engineering Team → CEO",
+      "Engineering Team → CEO → Helpdesk Teams Group",
+      "Open a new ticket and let it route automatically to the correct team."
+    ],
+    answer: 1,
+    explanation: "Section 7.4 outlines the path: first the Helpdesk Teams Group, then Engineering Team, then CEO. The CEO maintains an open-door policy as a high-level technical resource."
+  },
+  {
+    section: "🛠️ Tools & Remote Work",
+    q: "What tool should you use to see exactly what the user sees during a support session?",
+    options: [
+      "ITGlue",
+      "PIA",
+      "Blitz",
+      "TimeZest"
+    ],
+    answer: 2,
+    explanation: "Section 5.2: 'Blitz is your window into the user's experience. Before troubleshooting blind, connect via Blitz so you can see exactly what the user sees.'"
+  },
+  {
+    section: "🏢 On-Site Visits",
+    q: "When you arrive at a client site for an on-site visit, what is the FIRST thing you should do?",
+    options: [
+      "Begin work immediately on the highest-priority open ticket.",
+      "Check in with the company administrator(s) or management to let them know you have arrived.",
+      "Log into the client's system and review all open tickets before speaking to anyone.",
+      "Contact your team lead to confirm your arrival and estimated time to complete the work."
+    ],
+    answer: 1,
+    explanation: "Section 10.2: 'When you first arrive onsite, check in with the company administrator(s) or management to let them know you have arrived. Management should be aware that you are in the building.'"
+  },
+  {
+    section: "🎫 Ticket Management",
+    q: "A ticket can be marked as closed when:",
+    options: [
+      "You have applied a fix and your testing confirms the issue is resolved.",
+      "48 hours have passed since the last update with no complaints from the user.",
+      "The user has confirmed the issue is resolved, either by phone or email.",
+      "Your team lead approves the closure after reviewing ticket notes."
+    ],
+    answer: 2,
+    explanation: "Section 11.3: 'Never close a ticket without user confirmation. A ticket is not closed until the user has confirmed the issue is resolved—either by phone or email. Do not assume the issue is fixed.'"
+  },
+  {
+    section: "📊 Performance",
+    q: "What is the expected weekly ticket closure rate for a Frontline Support Engineer?",
+    options: [
+      "10–20 tickets per week",
+      "20–40 tickets per week",
+      "40–60 tickets per week",
+      "60–80 tickets per week"
+    ],
+    answer: 2,
+    explanation: "Section 11.2: 'The expected ticket closure rate for a Frontline Support Engineer is 40–60 tickets per week.' Falling below 40 may indicate inefficiencies; above 60 should not compromise quality."
+  },
+  {
+    section: "⚕️ HIPAA & Confidentiality",
+    q: "When working on a healthcare client's system and you encounter patient health information (PHI), you should:",
+    options: [
+      "Screenshot it and attach it to the ticket for reference during troubleshooting.",
+      "Only access PHI if absolutely necessary for the technical issue, and never copy, screenshot, or retain it.",
+      "Immediately close the remote session and open a new ticket flagged as HIPAA.",
+      "Ask the user to hide the PHI on their screen before you continue the session."
+    ],
+    answer: 1,
+    explanation: "Section 10.4: 'Never access, view, or discuss patient data unless absolutely necessary for the technical issue. If you encounter PHI during troubleshooting, do not copy, screenshot, or retain it in any way.'"
+  },
+  {
+    section: "👥 Team & Culture",
+    q: "What is the purpose of the Daily All-Hands Team Call, and what two things does each person share?",
+    options: [
+      "To review open tickets; each person shares ticket count and client satisfaction scores.",
+      "To assign new tickets; each person shares availability and current workload.",
+      "To serve as a daily team touchpoint; each person shares what they're working on and any relevant knowledge or insights.",
+      "To report to the CEO; each person shares completed tasks and weekly goals."
+    ],
+    answer: 2,
+    explanation: "Section 10.7: The daily all-hands call on Microsoft Teams is a team touchpoint where each person shares two things: what they're working on and any relevant knowledge or insights for the team."
+  }
+];
+
+// ── STATE ──
+let current = 0;
+let score = 0;
+let answered = new Array(questions.length).fill(null); // null | {correct: bool, chosen: int}
+let visitOrder = [];
+
+function startQuiz() {
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display  = 'block';
+  document.getElementById('progress-wrap').style.display = 'flex';
+  buildDotNav();
+  renderQuestion(0);
+}
+
+// ── DOT NAV ──
+function buildDotNav() {
+  const nav = document.getElementById('dot-nav');
+  nav.innerHTML = '';
+  questions.forEach((_, i) => {
+    const d = document.createElement('button');
+    d.className = 'dot';
+    d.id = `dot-${i}`;
+    d.textContent = i + 1;
+    d.onclick = () => renderQuestion(i);
+    nav.appendChild(d);
+  });
+}
+
+function updateDots() {
+  questions.forEach((_, i) => {
+    const d = document.getElementById(`dot-${i}`);
+    d.className = 'dot';
+    if (i === current) d.classList.add('current');
+    if (answered[i] !== null) {
+      d.classList.add(answered[i].correct ? 'answered-correct' : 'answered-wrong');
+    }
+  });
+}
+
+// ── PROGRESS BAR ──
+function updateProgress() {
+  const total = questions.length;
+  const answeredCount = answered.filter(a => a !== null).length;
+  const pct = (answeredCount / total) * 100;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = `Q ${current + 1} / ${total}`;
+  document.getElementById('prog-score').textContent = `Score: ${score}`;
+}
+
+// ── RENDER QUESTION ──
+function renderQuestion(index) {
+  current = index;
+  updateDots();
+  updateProgress();
+
+  const q = questions[index];
+  const area = document.getElementById('question-area');
+  const isAnswered = answered[index] !== null;
+
+  area.innerHTML = `
+    <div class="section-tag">${q.section}</div>
+    <div class="question-card">
+      <div class="q-header">
+        <div class="q-number">${index + 1}</div>
+        <div class="q-text">${q.q}</div>
+      </div>
+      <div class="options" id="options-wrap">
+        ${q.options.map((opt, i) => {
+          let cls = '';
+          if (isAnswered) {
+            if (i === q.answer) cls = 'correct';
+            else if (i === answered[index].chosen && !answered[index].correct) cls = 'wrong';
+          }
+          return `<button class="option-btn ${cls}"
+                    ${isAnswered ? 'disabled' : ''}
+                    onclick="selectAnswer(${index}, ${i})">
+            <span class="option-letter">${['A','B','C','D'][i]}</span>
+            <span>${opt}</span>
+          </button>`;
+        }).join('')}
+      </div>
+      <div class="feedback ${isAnswered ? (answered[index].correct ? 'correct-fb' : 'wrong-fb') : ''}"
+           id="feedback-box"
+           style="${isAnswered ? 'display:block' : ''}">
+        ${isAnswered
+          ? `<span class="feedback-icon">${answered[index].correct ? '✅' : '❌'}</span>
+             ${answered[index].correct
+               ? `<strong>Correct!</strong> ${q.explanation}`
+               : `<strong>Incorrect.</strong> The correct answer is <strong>${['A','B','C','D'][q.answer]}: ${q.options[q.answer]}</strong>. ${q.explanation}`
+             }`
+          : ''}
+      </div>
+      <div class="q-nav">
+        <div class="q-nav-left">
+          <button class="btn btn-secondary" onclick="renderQuestion(${index - 1})"
+                  ${index === 0 ? 'disabled style="opacity:.4;cursor:default"' : ''}>← Prev</button>
+          <button class="btn btn-secondary" onclick="renderQuestion(${index + 1})"
+                  ${index === questions.length - 1 ? 'style="display:none"' : ''}>Next →</button>
+        </div>
+        ${allAnswered() && index === questions.length - 1
+          ? `<button class="btn btn-accent" onclick="showResults()">🏁 See Results</button>`
+          : (allAnswered() ? `<button class="btn btn-accent" onclick="showResults()">🏁 See Results</button>` : '')}
+      </div>
+    </div>
+  `;
+}
+
+// ── SELECT ANSWER ──
+function selectAnswer(qIndex, chosen) {
+  if (answered[qIndex] !== null) return;
+  const correct = chosen === questions[qIndex].answer;
+  answered[qIndex] = { correct, chosen };
+  if (correct) score++;
+  renderQuestion(qIndex);
+
+  // Auto-advance after short delay if not last question
+  if (qIndex < questions.length - 1) {
+    setTimeout(() => {
+      const next = findNextUnanswered(qIndex);
+      if (next !== -1) renderQuestion(next);
+    }, 1600);
+  }
+}
+
+function findNextUnanswered(from) {
+  for (let i = from + 1; i < questions.length; i++) {
+    if (answered[i] === null) return i;
+  }
+  return -1;
+}
+
+function allAnswered() {
+  return answered.every(a => a !== null);
+}
+
+// ── RESULTS ──
+function showResults() {
+  document.getElementById('quiz-screen').style.display  = 'none';
+  document.getElementById('progress-wrap').style.display = 'none';
+  document.getElementById('result-screen').style.display = 'block';
+
+  const wrong = questions.length - score;
+  const pct = Math.round((score / questions.length) * 100);
+
+  document.getElementById('sc-num').textContent      = score;
+  document.getElementById('stat-correct').textContent = score;
+  document.getElementById('stat-wrong').textContent   = wrong;
+  document.getElementById('stat-pct').textContent     = pct + '%';
+
+  // Arc animation
+  const circ = 2 * Math.PI * 62;
+  const offset = circ - (score / questions.length) * circ;
+  const arc = document.getElementById('arc');
+  setTimeout(() => {
+    arc.style.strokeDashoffset = offset;
+    arc.style.stroke = score >= 18 ? '#1a9e5c' : score >= 15 ? '#1a6bb5' : score >= 12 ? '#f0a500' : '#c0392b';
+  }, 100);
+
+  // Grade
+  let label, desc;
+  if      (pct >= 90) { label = '🌟 Excellent!';          desc = 'Outstanding performance! You have a strong command of the handbook. Keep up the great work.'; }
+  else if (pct >= 75) { label = '✅ Proficient';           desc = 'Good job! You understand the core material. Review any missed questions to sharpen your knowledge.'; }
+  else if (pct >= 60) { label = '📚 Needs Review';         desc = 'You have a foundation, but some key areas need attention. Re-read the relevant sections and try again.'; }
+  else                { label = '🔄 Re-read the Handbook'; desc = 'This quiz shows some important gaps in handbook knowledge. Please re-read the handbook thoroughly before retaking.'; }
+
+  document.getElementById('grade-label').textContent = label;
+  document.getElementById('grade-desc').textContent  = desc;
+
+  // Build review list
+  const list = document.getElementById('review-list');
+  list.innerHTML = questions.map((q, i) => {
+    const ans = answered[i];
+    const cls = ans.correct ? 'ri-correct' : 'ri-wrong';
+    const icon = ans.correct ? '✅' : '❌';
+    return `<div class="review-item ${cls}">
+      <div class="ri-q">${icon} Q${i+1}: ${q.q}</div>
+      ${!ans.correct
+        ? `<div class="ri-your">Your answer: ${['A','B','C','D'][ans.chosen]}) ${q.options[ans.chosen]}</div>
+           <div class="ri-correct-ans">Correct answer: ${['A','B','C','D'][q.answer]}) ${q.options[q.answer]}</div>`
+        : `<div class="ri-correct-ans">Your answer: ${['A','B','C','D'][ans.chosen]}) ${q.options[ans.chosen]}</div>`}
+      <div style="margin-top:5px;font-size:.83rem;color:#4a5568;">${q.explanation}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleReview(btn) {
+  const list = document.getElementById('review-list');
+  const open = list.style.display === 'block';
+  list.style.display = open ? 'none' : 'block';
+  btn.textContent = (open ? '📖 Show' : '📖 Hide') + ' Answer Review ' + (open ? '▼' : '▲');
+}
+
+function restartQuiz() {
+  current = 0;
+  score = 0;
+  answered = new Array(questions.length).fill(null);
+  document.getElementById('result-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display   = 'block';
+  document.getElementById('progress-wrap').style.display = 'flex';
+  document.getElementById('arc').style.strokeDashoffset  = '389.6';
+  buildDotNav();
+  renderQuestion(0);
+}
+
+function printPage() { window.print(); }
+</script>
+</body>
+</html>
